@@ -17,16 +17,6 @@
 		"TSB": "createTSB.js"
 	},
 	"scripts": {
-		"prestart": "npm run rebuild",
-		"start": "node .",
-		"dev": "nodemon .",
-		"build": "tsc",
-		"rebuild": "npm run clean && npm run build",
-		"clean": "rm -rf dist/*",
 		"TSB": "node createTSB.js"
-	},
-	"devDependencies": {
-		"nodemon": "^2.0.7",
-		"typescript": "^4.1.4"
 	}
 }
