@@ -5,11 +5,12 @@
 
 const { exec } = require('child_process');
 const fs = require('fs');
+const axios = require('axios');
 
 const args = process.argv;
 const useYarn = args.slice(-1)[0].toLowerCase() !== '--use-npm';
 
-const tsConfig = {
+const tsConfigBackup = {
 	compilerOptions: {
 		noImplicitAny: true,
 		removeComments: true,
@@ -28,7 +29,7 @@ const tsConfig = {
 	]
 };
 
-const nodemonConfig = {
+const nodemonConfigBackup = {
 	watch: [
 		'src'
 	],
@@ -39,7 +40,7 @@ const nodemonConfig = {
 	exec: 'ts-node ./src/index.ts'
 };
 
-const readmeText = `## TypeScript Boilerplate
+const readmeTextBackup = `## TypeScript Boilerplate
 - run \`yarn start\` or \`npm start\` to start the application.'
 - run \`yarn run dev\` or \`npm run dev\` to start the application in developer mode.'
 
@@ -65,10 +66,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `;
 
-const indexTSCode = `console.log('ts-boilerplate works. delete this and write your code here 😃');
+const indexTSCodeBackup = `console.log('ts-boilerplate works. delete this and write your code here 😃');
 `;
 
-const gitIgnoreText = `# Build files
+const gitIgnoreTextBackup = `# Build files
 dist/*
 build/*
 
@@ -137,10 +138,19 @@ const runSetup = async () => {
 
 		operations.push(new Promise((resolve, reject) => {
 			console.log('configuring typescript...');
-			fs.writeFile('tsconfig.json', JSON.stringify(tsConfig), (err) => {
-				if (err) reject(err);
-				resolve();
-			});
+			axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/tsconfig.json')
+				.then(({ data: tsConfig }) => {
+					fs.writeFile('tsconfig.json', JSON.stringify(tsConfig), (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				}).catch(err => {
+					console.log('cannot fetch lastest version from github, writing nodemon.json from backup...');
+					fs.writeFile('tsconfig.json', JSON.stringify(tsConfigBackup), (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				});
 		}))
 
 		console.log('installing nodemon...');
@@ -148,42 +158,74 @@ const runSetup = async () => {
 
 		operations.push(new Promise((resolve, reject) => {
 			console.log('configuring nodemon...');
-			fs.writeFile('nodemon.json', JSON.stringify(nodemonConfig), (err) => {
-				if (err) reject(err);
-				resolve();
-			});
+			axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/nodemon.json')
+				.then(({ data: nodemonConfig }) => {
+					fs.writeFile('README.md', JSON.stringify(nodemonConfig), (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				}).catch(err => {
+					console.log('cannot fetch lastest version from github, writing nodemon.json from backup...');
+					fs.writeFile('nodemon.json', JSON.stringify(nodemonConfigBackup), (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				});
 		}));
 
 		operations.push(new Promise((resolve, reject) => {
 			console.log('adding README.md...');
-			fs.writeFile('README.md', readmeText, (err) => {
-				if (err) reject(err);
-				resolve();
-			});
+			axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/README.md')
+				.then(({ data: readmeText }) => {
+					fs.writeFile('README.md', readmeText, (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				}).catch(err => {
+					console.log('cannot fetch lastest version from github, writing READEME.md from backup...');
+					fs.writeFile('README.md', readmeTextBackup, (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				});
 		}));
 
 		operations.push(new Promise((resolve, reject) => {
 			console.log('creating src folder...');
 			fs.mkdir('src', (err) => {
 				if (err) reject(err);
-				resolve();
-			});
-		}));
-
-		operations.push(new Promise((resolve, reject) => {
-			console.log('creating src/index.ts');
-			fs.writeFile('src/index.ts', indexTSCode, (err) => {
-				if (err) reject(err);
-				resolve();
+				console.log('creating src/index.ts');
+				axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/src/index.ts')
+					.then(({ data: indexTSCode }) => {
+						fs.writeFile('src/index.ts', indexTSCode, (err) => {
+							if (err) reject(err);
+							resolve();
+						});
+					}).catch(err => {
+						console.log('cannot fetch lastest version from github, writing index.ts from backup...');
+						fs.writeFile('src/index.ts', indexTSCodeBackup, (err) => {
+							if (err) reject(err);
+							resolve();
+						});
+					});
 			});
 		}));
 
 		operations.push(new Promise((resolve, reject) => {
 			console.log('creating .gitignore');
-			fs.writeFile('.gitignore', gitIgnoreText, (err) => {
-				if (err) reject(err);
-				resolve();
-			});
+			axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/.gitignore')
+				.then(({ data: gitIgnoreText }) => {
+					fs.writeFile('.gitignore', gitIgnoreText, (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				}).catch(err => {
+					console.log('cannot fetch lastest version from github, writing gitignore from backup...');
+					fs.writeFile('.gitignore', gitIgnoreText, (err) => {
+						if (err) reject(err);
+						resolve();
+					});
+				});
 		}));
 
 		try {
