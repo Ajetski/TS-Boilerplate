@@ -91,12 +91,11 @@ const runCommand = (cmd, rejectStdErr = true) => {
 				reject(error);
 				return;
 			}
-			if (stderr && rejectStdErr) {
-				reject(error);
+			if (stderr && rejectStdErr && stderr.toLowerCase().indexOf('warn') === -1) {
+				reject(stderr);
 				return;
 			}
-			if (stdout.toLowerCase().indexOf('done') || stdout.toLowerCase().indexOf('git'))
-				resolve();
+			resolve();
 		});
 	});
 }
