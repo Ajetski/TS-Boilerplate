@@ -1,4 +1,10 @@
-## TS-Boilerplate
+## TypeScript Boilerplate
+### Option 1
+- create a folder for your project
+- run `yarn init` or `npm init` to create a package.json
+- `run npx github:Ajetski/tsb` to initialize the TypeScript Boilerplate
+
+### Option 2
 - Download or clone
 - run `yarn install` to install depedencies.
 - run `yarn start` or `npm start` to start the application.
