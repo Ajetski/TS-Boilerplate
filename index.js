@@ -118,8 +118,12 @@ const runSetup = async () => {
 		packageConfig.main = 'dist/index.js'
 		packageConfig.scripts = {
 			...packageConfig.scripts,
-			start: 'create-tsb scripts:start',
-			dev: 'create-tsb scripts:dev'
+			prestart: 'npm run rebuild',
+			start: 'node .',
+			dev: 'nodemon .',
+			build: 'tsc',
+			rebuild: 'npm run clean && npm run build',
+			clean: 'rm -rf dist/*',
 		}
 		operations.push(new Promise((resolve, reject) => {
 			fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
