@@ -36,12 +36,9 @@ const nodemonConfig = {
 	exec: 'ts-node ./src/index.ts'
 };
 
-const readmeText = `## TS-Boilerplate +
-- Download or clone +
-- run \`yarn install\` to install depedencies.' 
+const readmeText = `## TypeScript Boilerplate
 - run \`yarn start\` or \`npm start\` to start the application.'
 - run \`yarn run dev\` or \`npm run dev\` to start the application in developer mode.'
-
 
 ## MIT License
 Copyright (c) 2021 Adam Jeniski
