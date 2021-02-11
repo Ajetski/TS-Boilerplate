@@ -78,18 +78,20 @@ node_modules/*
 .vscode/*
 `
 
-const runCommand = (cmd) => {
-	new Promise((resolve, reject) => {
+const runCommand = (cmd, rejectStdErr = true) => {
+	// console.log(cmd);
+	return new Promise((resolve, reject) => {
 		exec(cmd, (error, stdout, stderr) => {
 			if (error) {
 				reject(error);
 				return;
 			}
-			if (stderr) {
+			if (stderr && rejectStdErr) {
 				reject(error);
 				return;
 			}
-			resolve(stdout);
+			if (stdout.toLowerCase().indexOf('done') || stdout.toLowerCase().indexOf('git'))
+				resolve();
 		});
 	});
 }
@@ -97,6 +99,27 @@ const runCommand = (cmd) => {
 const runSetup = async () => {
 	try {
 		console.log('Creating TypeScript Boilerplate...');
+
+		console.log('configuring package.json...')
+		let packageConfig;
+		try {
+			packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
+		} catch (err) {
+			console.log('package.json does not exist. Creating one...');
+			await runCommand('yarn init -y', false);
+			packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
+		}
+		packageConfig.main = 'dist/index.js'
+		packageConfig.scripts = {
+			...packageConfig.scripts,
+			prestart: 'npm run rebuild',
+			start: 'node .',
+			dev: 'nodemon .',
+			build: 'tsc',
+			rebuild: 'npm run clean && npm run build',
+			clean: 'rm -rf dist/*',
+		}
+		fs.writeFileSync('package.json', JSON.stringify(packageConfig));
 
 		console.log('installing typescript...');
 		await runCommand('yarn add -D typescript');
@@ -109,20 +132,6 @@ const runSetup = async () => {
 
 		console.log('configuring nodemon...');
 		fs.writeFileSync('nodemon.json', JSON.stringify(nodemonConfig));
-
-		console.log('configuring package.json...')
-		const packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
-		packageConfig.main = 'dist/index.js'
-		packageConfig.scripts = {
-			...packageConfig.scripts,
-			prestart: 'npm run rebuild',
-			start: 'node .',
-			dev: 'nodemon .',
-			build: 'tsc',
-			rebuild: 'npm run clean && npm run build',
-			clean: 'rm -rf dist/*',
-		}
-		fs.writeFileSync('package.json', JSON.stringify(packageConfig));
 
 		console.log('adding README.md...');
 		fs.writeFileSync('README.md', readmeText);
