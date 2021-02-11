@@ -1,9 +1,14 @@
 {
 	"name": "create-tsb",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"main": "index.js",
 	"license": "MIT",
-	"author": "Adam Jeniski",
+	"private": false,
+	"author": {
+		"name": "Adam Jeniski",
+		"email": "ajeniski4@gmail.com",
+		"url": "https://github.com/Ajetski"
+	},
 	"homepage": "https://github.com/Ajetski/create-tsb",
 	"repository": {
 		"type": "git",
@@ -14,10 +19,10 @@
 		"email": "ajeniski4@gmail.com"
 	},
 	"bin": {
-		"create-tsb": "index.js"
+		"create-tsb": "index.js npm"
 	},
 	"scripts": {
-		"create-tsb": "node index.js",
-		"start": "node index.js"
+		"create-tsb": "node index.js npm",
+		"start": "node index.js yarn"
 	}
 }
