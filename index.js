@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-console.log('test');
+console.log(process.argv);
