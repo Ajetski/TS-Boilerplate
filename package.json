@@ -1,6 +1,6 @@
 {
 	"name": "create-tsb",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"main": "index.js",
 	"license": "MIT",
 	"author": "Adam Jeniski",
@@ -14,7 +14,8 @@
 		"email": "ajeniski4@gmail.com"
 	},
 	"bin": {
-		"create-tsb": "index.js"
+		"create-tsb": "index.js",
+		"start": "node ."
 	},
 	"scripts": {
 		"create-tsb": "node index.js"
