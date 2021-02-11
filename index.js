@@ -65,7 +65,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `;
 
-const indexTSCode = `console.log('ts-boilerplate works. delete this and write your code here 😊');
+const indexTSCode = `console.log('ts-boilerplate works. delete this and write your code here 😃');
 `;
 
 const gitIgnoreText = `# Build files
@@ -102,7 +102,9 @@ const runCommand = (cmd, rejectStdErr = true) => {
 
 const runSetup = async () => {
 	try {
-		console.log('Creating TypeScript Boilerplate...');
+		const operations = [];
+
+		console.log(`Creating TypeScript Boilerplate using ${useYarn ? 'yarn' : 'npm'}...`);
 
 		console.log('configuring package.json...')
 		let packageConfig;
@@ -123,31 +125,66 @@ const runSetup = async () => {
 			rebuild: 'npm run clean && npm run build',
 			clean: 'rm -rf dist/*',
 		}
-		fs.writeFileSync('package.json', JSON.stringify(packageConfig));
+		operations.push(new Promise((resolve, reject) => {
+			fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
 		console.log('installing typescript...');
 		await runCommand(useYarn ? 'yarn add -D typescript' : 'npm i --save-dev typescript');
 
-		console.log('configuring typescript...');
-		fs.writeFileSync('tsconfig.json', JSON.stringify(tsConfig));
+		operations.push(new Promise((resolve, reject) => {
+			console.log('configuring typescript...');
+			fs.writeFile('tsconfig.json', JSON.stringify(tsConfig), (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}))
 
 		console.log('installing nodemon...');
 		await runCommand(useYarn ? 'yarn add -D nodemon' : 'npm i --save-dev nodemon');
 
-		console.log('configuring nodemon...');
-		fs.writeFileSync('nodemon.json', JSON.stringify(nodemonConfig));
+		operations.push(new Promise((resolve, reject) => {
+			console.log('configuring nodemon...');
+			fs.writeFile('nodemon.json', JSON.stringify(nodemonConfig), (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
-		console.log('adding README.md...');
-		fs.writeFileSync('README.md', readmeText);
+		operations.push(new Promise((resolve, reject) => {
+			console.log('adding README.md...');
+			fs.writeFile('README.md', readmeText, (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
-		console.log('creating src folder...');
-		fs.mkdirSync('src');
+		operations.push(new Promise((resolve, reject) => {
+			console.log('creating src folder...');
+			fs.mkdir('src', (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
-		console.log('creating src/index.ts');
-		fs.writeFileSync('src/index.ts', indexTSCode);
+		operations.push(new Promise((resolve, reject) => {
+			console.log('creating src/index.ts');
+			fs.writeFile('src/index.ts', indexTSCode, (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
-		console.log('creating .gitignore');
-		fs.writeFileSync('.gitignore', gitIgnoreText);
+		operations.push(new Promise((resolve, reject) => {
+			console.log('creating .gitignore');
+			fs.writeFile('.gitignore', gitIgnoreText, (err) => {
+				if (err) reject(err);
+				resolve();
+			});
+		}));
 
 		try {
 			await runCommand('git init');
@@ -156,7 +193,8 @@ const runSetup = async () => {
 			// either git repo already exists or user does not have git installed
 		}
 
-		console.log('setup complete. happy coding! :)')
+		await Promise.all(operations);
+		console.log('setup complete. happy coding! :)');
 	}
 	catch (err) {
 		console.log('oops... something went wrong:');
