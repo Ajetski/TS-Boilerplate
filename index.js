@@ -132,8 +132,9 @@ const runSetup = async () => {
 			});
 		}));
 
-		console.log('installing create-tsb scripts...');
-		await runCommand(useYarn ? 'yarn add create-tsb' : 'npm i create-tsb');
+		// Will be needed later for webpack stuff, etc
+		// console.log('installing create-tsb scripts...');
+		// await runCommand(useYarn ? 'yarn add create-tsb' : 'npm i create-tsb');
 
 		console.log('installing typescript...');
 		await runCommand(useYarn ? 'yarn add -D typescript' : 'npm i --save-dev typescript');
