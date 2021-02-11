@@ -36,12 +36,12 @@ const nodemonConfig = {
 	exec: 'ts-node ./src/index.ts'
 };
 
-const readmeText = ```## TS-Boilerplate
-- Download or clone``` +
-	'- run `yarn install` to install depedencies.' +
-	'- run `yarn start` or `npm start` to start the application.' +
-	'- run `yarn run dev` or `npm run dev` to start the application in developer mode.' +
-	```
+const readmeText = `## TS-Boilerplate +
+- Download or clone +
+- run \`yarn install\` to install depedencies.' 
+- run \`yarn start\` or \`npm start\` to start the application.'
+- run \`yarn run dev\` or \`npm run dev\` to start the application in developer mode.'
+
 
 ## MIT License
 Copyright (c) 2021 Adam Jeniski
@@ -63,10 +63,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-```;
+`;
 
-const indexTSCode = ```console.log('ts-boilerplate works. delete this and write your code here 😊');
-```;
+const indexTSCode = `console.log('ts-boilerplate works. delete this and write your code here 😊');
+`;
+
+const gitIgnoreText = `# Build files
+dist/*
+
+# NPM modules
+node_modules/*
+
+# Editor config files
+.vscode/*
+`
 
 const runCommand = (cmd) => {
 	new Promise((resolve, reject) => {
@@ -122,6 +132,18 @@ const runSetup = async () => {
 
 		console.log('creating src/index.ts');
 		fs.writeFileSync('src/index.ts', indexTSCode);
+
+		console.log('creating .gitignore');
+		fs.writeFileSync('.gitignore', gitIgnoreText);
+
+		try {
+			await runCommand('git init');
+		} finally {
+			// fail silently
+			// either git repo already exists or user does not have git installed
+		}
+
+		console.log('setup complete. happy coding! :)')
 	}
 	catch (err) {
 		console.log('oops... something went wrong:');
