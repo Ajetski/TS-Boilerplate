@@ -22,7 +22,7 @@
 		"create-tsb": "index.js"
 	},
 	"scripts": {
-		"create-tsb": "node index.js npm",
-		"start": "node index.js yarn"
+		"create-tsb": "node index.js",
+		"start": "node index.js"
 	}
 }
