@@ -70,12 +70,16 @@ const indexTSCode = `console.log('ts-boilerplate works. delete this and write yo
 
 const gitIgnoreText = `# Build files
 dist/*
+build/*
 
 # NPM modules
 node_modules/*
 
 # Editor config files
 .vscode/*
+
+# Secrets
+.env
 `
 
 const runCommand = (cmd, rejectStdErr = true) => {
