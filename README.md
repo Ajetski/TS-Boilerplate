@@ -2,13 +2,9 @@
 ### Option 1
 - create a folder for your project
 - run `yarn init` or `npm init` to create a package.json (you can use the -y flag for either command to skip all questions)
-- `run npx github:Ajetski/tsb` to initialize the TypeScript Boilerplate
-
-### Option 2
-- Download or clone
-- run `yarn install` to install depedencies.
+- run `yarn create tsb` or `npx create-tsb` to initialize the TypeScript Boilerplate
 - run `yarn start` or `npm start` to start the application.
-- run `yarn run dev` or `npm run dev` to start the application in developer mode.
+- run `yarn run dev` or `npm run dev` to start the application in developer/watch mode.
 
 
 ## MIT License
