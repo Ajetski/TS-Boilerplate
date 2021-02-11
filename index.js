@@ -118,12 +118,8 @@ const runSetup = async () => {
 		packageConfig.main = 'dist/index.js'
 		packageConfig.scripts = {
 			...packageConfig.scripts,
-			prestart: 'npm run rebuild',
-			start: 'node .',
-			dev: 'nodemon .',
-			build: 'tsc',
-			rebuild: 'npm run clean && npm run build',
-			clean: 'rm -rf dist/*',
+			start: 'create-tsb scripts:start',
+			dev: 'create-tsb scripts:dev'
 		}
 		operations.push(new Promise((resolve, reject) => {
 			fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
@@ -131,6 +127,9 @@ const runSetup = async () => {
 				resolve();
 			});
 		}));
+
+		console.log('installing create-tsb scripts...');
+		await runCommand(useYarn ? 'yarn add create-tsb' : 'npm i create-tsb');
 
 		console.log('installing typescript...');
 		await runCommand(useYarn ? 'yarn add -D typescript' : 'npm i --save-dev typescript');
@@ -159,7 +158,7 @@ const runSetup = async () => {
 			console.log('configuring nodemon...');
 			axios.get('https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/nodemon.json')
 				.then(({ data: nodemonConfig }) => {
-					fs.writeFile('README.md', JSON.stringify(nodemonConfig), (err) => {
+					fs.writeFile('nodemon.json', JSON.stringify(nodemonConfig), (err) => {
 						if (err) reject(err);
 						resolve();
 					});
