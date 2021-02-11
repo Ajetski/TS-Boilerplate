@@ -19,7 +19,7 @@
 		"email": "ajeniski4@gmail.com"
 	},
 	"bin": {
-		"create-tsb": "index.js npm"
+		"create-tsb": "index.js"
 	},
 	"scripts": {
 		"create-tsb": "node index.js npm",
