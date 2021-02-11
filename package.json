@@ -1,6 +1,6 @@
 {
 	"name": "create-tsb",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"main": "index.js",
 	"license": "MIT",
 	"private": false,
@@ -25,8 +25,8 @@
 		"create-tsb": "node index.js",
 		"start": "node index.js"
 	},
-	"dependencies": {},
-	"devDependencies": {
+	"dependencies": {
 		"axios": "^0.21.1"
-	}
+	},
+	"devDependencies": {}
 }
