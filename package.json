@@ -24,5 +24,8 @@
 	"scripts": {
 		"create-tsb": "node index.js",
 		"start": "node index.js"
+	},
+	"dependencies": {
+		"axios": "^0.21.1"
 	}
 }
