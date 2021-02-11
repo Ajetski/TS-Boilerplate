@@ -136,7 +136,7 @@ const runSetup = async () => {
 		console.log('adding README.md...');
 		fs.writeFileSync('README.md', readmeText);
 
-		console.log('creating src file...');
+		console.log('creating src folder...');
 		fs.mkdirSync('src');
 
 		console.log('creating src/index.ts');
