@@ -1,6 +1,6 @@
 {
 	"name": "create-tsb",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"main": "index.js",
 	"license": "MIT",
 	"private": false,
@@ -23,7 +23,12 @@
 	},
 	"scripts": {
 		"create-tsb": "node index.js",
-		"start": "node index.js"
+		"start": "node index.js",
+		"scripts:start": "npm run scripts:rebuild && node .",
+		"scripts:dev": "nodemon .",
+		"scripts:build": "tsc",
+		"scripts:rebuild": "npm run clean && npm run build",
+		"scripts:clean": "rm -rf dist/*"
 	},
 	"dependencies": {
 		"axios": "^0.21.1"
