@@ -1,9 +1,12 @@
 ## TypeScript Boilerplate
-- yarn must be installed
+### Run with yarn
 - create a folder for your project
 - run `yarn create tsb` or `npx create-tsb` to initialize the TypeScript Boilerplate
-- run `yarn start` or `npm start` to start the application.
-- run `yarn run dev` or `npm run dev` to start the application in developer/watch mode.
+
+
+### Run with npm
+- create a folder for your project
+- run `yarn create tsb --use-npm` or `npx create-tsb --use-npm` to initialize the TypeScript Boilerplate
 
 
 ## MIT License
