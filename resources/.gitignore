@@ -1,0 +1,12 @@
+# Build files
+dist/*
+build/*
+
+# NPM modules
+node_modules/*
+
+# Editor config files
+.vscode/*
+
+# Secrets
+.env
