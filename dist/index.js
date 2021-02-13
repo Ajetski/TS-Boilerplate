@@ -127,39 +127,53 @@ var configurePackage = function (pkg, fileName) { return __awaiter(void 0, void 
     });
 }); };
 var runSetup = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var operations, packageConfig_1, err_1, makeSourceCode, err_2;
+    var operations, managePackages, makeSourceCode, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 10, , 11]);
+                _a.trys.push([0, 6, , 7]);
                 operations = [];
                 console.log("Creating TypeScript Boilerplate using " + (useYarn ? 'yarn' : 'npm') + "...");
-                console.log('configuring package.json...');
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 2, , 4]);
-                packageConfig_1 = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
-                return [3, 4];
-            case 2:
-                err_1 = _a.sent();
-                console.log('package.json does not exist. Creating one...');
-                return [4, runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false)];
-            case 3:
-                _a.sent();
-                packageConfig_1 = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
-                return [3, 4];
-            case 4:
-                packageConfig_1 = __assign(__assign({}, packageConfig_1), { main: 'dist/index.js', scripts: __assign(__assign({}, packageConfig_1.scripts), { prestart: 'npm run rebuild', start: 'node .', dev: 'nodemon .', build: 'tsc', rebuild: 'npm run clean && npm run build', clean: 'rm -rf dist/*' }) });
-                operations.push(new Promise(function (resolve, reject) {
-                    fs_1["default"].writeFile('package.json', JSON.stringify(packageConfig_1), function (err) {
-                        if (err)
-                            reject(err);
-                        resolve();
+                managePackages = function () { return __awaiter(void 0, void 0, void 0, function () {
+                    var packageConfig, err_2;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                console.log('configuring package.json...');
+                                _a.label = 1;
+                            case 1:
+                                _a.trys.push([1, 2, , 4]);
+                                packageConfig = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
+                                return [3, 4];
+                            case 2:
+                                err_2 = _a.sent();
+                                console.log('package.json does not exist. Creating one...');
+                                return [4, runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false)];
+                            case 3:
+                                _a.sent();
+                                packageConfig = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
+                                return [3, 4];
+                            case 4:
+                                packageConfig = __assign(__assign({}, packageConfig), { main: 'dist/index.js', scripts: __assign(__assign({}, packageConfig.scripts), { prestart: 'npm run rebuild', start: 'node .', dev: 'nodemon .', build: 'tsc', rebuild: 'npm run clean && npm run build', clean: 'rm -rf dist/*' }) });
+                                return [4, new Promise(function (resolve, reject) {
+                                        fs_1["default"].writeFile('package.json', JSON.stringify(packageConfig), function (err) {
+                                            if (err)
+                                                reject(err);
+                                            resolve();
+                                        });
+                                    })];
+                            case 5:
+                                _a.sent();
+                                return [4, configurePackage('typescript', 'tsconfig.json')];
+                            case 6:
+                                _a.sent();
+                                return [4, configurePackage('nodemon', 'nodemon.json')];
+                            case 7:
+                                _a.sent();
+                                return [2];
+                        }
                     });
-                }));
-                operations.push(configurePackage('typescript', 'tsconfig.json'));
-                operations.push(configurePackage('nodemon', 'nodemon.json'));
-                operations.push(makeFile('READEME.md'));
+                }); };
                 makeSourceCode = function () { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
@@ -173,28 +187,30 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                         }
                     });
                 }); };
+                operations.push(managePackages());
+                operations.push(makeFile('README.md'));
                 operations.push(makeSourceCode());
                 operations.push(makeFile('.gitignore'));
                 return [4, Promise.all(operations)];
-            case 5:
+            case 1:
                 _a.sent();
-                _a.label = 6;
-            case 6:
-                _a.trys.push([6, , 8, 9]);
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, , 4, 5]);
                 return [4, runCommand('git init')];
-            case 7:
+            case 3:
                 _a.sent();
-                return [3, 9];
-            case 8: return [7];
-            case 9:
+                return [3, 5];
+            case 4: return [7];
+            case 5:
                 console.log('setup complete. happy coding! :)');
-                return [3, 11];
-            case 10:
-                err_2 = _a.sent();
+                return [3, 7];
+            case 6:
+                err_1 = _a.sent();
                 console.log('oops... something went wrong:');
-                console.log(err_2);
-                return [3, 11];
-            case 11: return [2];
+                console.log(err_1);
+                return [3, 7];
+            case 7: return [2];
         }
     });
 }); };

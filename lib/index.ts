@@ -56,50 +56,51 @@ const runSetup = async () => {
 		const operations = [];
 
 		console.log(`Creating TypeScript Boilerplate using ${useYarn ? 'yarn' : 'npm'}...`);
-
-		console.log('configuring package.json...')
-		let packageConfig: { main: string, scripts: { [script: string]: string } };
-		try {
-			packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
-		} catch (err) {
-			console.log('package.json does not exist. Creating one...');
-			await runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false);
-			packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
-		}
-		packageConfig = {
-			...packageConfig,
-			main: 'dist/index.js',
-			scripts: {
-				...packageConfig.scripts,
-				prestart: 'npm run rebuild',
-				start: 'node .',
-				dev: 'nodemon .',
-				build: 'tsc',
-				rebuild: 'npm run clean && npm run build',
-				clean: 'rm -rf dist/*',
+		const managePackages = async () => {
+			console.log('configuring package.json...');
+			let packageConfig: { main: string, scripts: { [script: string]: string } };
+			try {
+				packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
+			} catch (err) {
+				console.log('package.json does not exist. Creating one...');
+				await runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false);
+				packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
 			}
+			packageConfig = {
+				...packageConfig,
+				main: 'dist/index.js',
+				scripts: {
+					...packageConfig.scripts,
+					prestart: 'npm run rebuild',
+					start: 'node .',
+					dev: 'nodemon .',
+					build: 'tsc',
+					rebuild: 'npm run clean && npm run build',
+					clean: 'rm -rf dist/*',
+				}
+			};
+
+			await new Promise<void>((resolve, reject) => {
+				fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
+					if (err) reject(err);
+					resolve();
+				});
+			})
+
+			await configurePackage('typescript', 'tsconfig.json')
+			await configurePackage('nodemon', 'nodemon.json');
 		};
-		operations.push(new Promise<void>((resolve, reject) => {
-			fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
-				if (err) reject(err);
-				resolve();
-			});
-		}));
-
-		operations.push(configurePackage('typescript', 'tsconfig.json'));
-
-		operations.push(configurePackage('nodemon', 'nodemon.json'));
-
-		operations.push(makeFile('READEME.md'));
 
 		const makeSourceCode = async () => {
 			await makeDir('src');
 			await makeFile('src/index.ts');
 		}
+
+
+		operations.push(managePackages());
+		operations.push(makeFile('README.md'));
 		operations.push(makeSourceCode());
-
 		operations.push(makeFile('.gitignore'));
-
 		await Promise.all(operations);
 
 		try {
