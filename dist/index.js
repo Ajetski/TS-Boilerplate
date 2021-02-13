@@ -54,7 +54,23 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = __importDefault(require("fs"));
 var axios_1 = __importDefault(require("axios"));
-var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
+console.log(process.argv);
+var args = process.argv.slice(-2);
+var useYarn = !args.some(function (arg) { return arg === '--use-npm'; });
+var findProjectFolder = function () {
+    var createTsb = args.indexOf('create-tsb');
+    if (createTsb !== -1)
+        return args[createTsb + 1];
+    var tsb = args.indexOf('create-tsb');
+    if (tsb !== -1)
+        return args[tsb + 1];
+    var githubAjetskiTsb = args.indexOf('github:Ajetski/create-tsb');
+    if (githubAjetskiTsb !== -1)
+        return args[githubAjetskiTsb + 1];
+    return null;
+};
+var projectFolder = findProjectFolder();
+console.log("folder: " + projectFolder);
 var makeFile = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var data;
     return __generator(this, function (_a) {

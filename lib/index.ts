@@ -7,7 +7,26 @@ import { exec } from 'child_process';
 import fs, { mkdir } from 'fs';
 import axios from 'axios';
 
-const useYarn = !process.argv.some(arg => arg === '--use-npm');
+console.log(process.argv);
+const args = process.argv.slice(-2);
+const useYarn = !args.some(arg => arg === '--use-npm');
+const findProjectFolder = () => {
+	const createTsb = args.indexOf('create-tsb');
+	if (createTsb !== -1)
+		return args[createTsb + 1];
+
+	const tsb = args.indexOf('create-tsb');
+	if (tsb !== -1)
+		return args[tsb + 1];
+
+	const githubAjetskiTsb = args.indexOf('github:Ajetski/create-tsb');
+	if (githubAjetskiTsb !== -1)
+		return args[githubAjetskiTsb + 1];
+
+	return null;
+}
+const projectFolder = findProjectFolder();
+console.log(`folder: ${projectFolder}`);
 
 const makeFile = async (url: string) => {
 	console.log(`adding ${url}...`);
@@ -30,7 +49,6 @@ const makeDir = async (dirName: string) => {
 }
 
 const runCommand = (cmd: string, rejectStdErr = true) => {
-	// console.log(cmd);
 	return new Promise<void>((resolve, reject) => {
 		exec(cmd, (error, stdout, stderr) => {
 			if (error) {
