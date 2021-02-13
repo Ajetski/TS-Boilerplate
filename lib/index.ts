@@ -11,9 +11,11 @@ const useYarn = !process.argv.some(arg => arg === '--use-npm');
 
 const makeFile = async (url: string) => {
 	console.log(`adding ${url}...`);
-	const { data: readmeText } = await axios.get(`https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/${url}`);
+	let { data } = await axios.get(`https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/${url}`);
+	if (typeof data === 'object')
+		data = JSON.stringify(data);
 	await new Promise<void>((resolve, reject) =>
-		fs.writeFile(url, readmeText, (err) => {
+		fs.writeFile(url, data, (err) => {
 			if (err) reject(err);
 			resolve();
 		}));
@@ -54,7 +56,6 @@ const configurePackage = async (pkg: string, fileName?: string) => {
 const runSetup = async () => {
 	try {
 		const operations = [];
-
 		console.log(`Creating TypeScript Boilerplate using ${useYarn ? 'yarn' : 'npm'}...`);
 		const managePackages = async () => {
 			console.log('configuring package.json...');
