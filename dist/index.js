@@ -133,7 +133,7 @@ var configurePackage = function (pkg, fileName) { return __awaiter(void 0, void 
         switch (_a.label) {
             case 0:
                 console.log("installing " + pkg + "...");
-                return [4, runCommand(projectFolder ? "cd " + projectFolder + "; " : '' + useYarn ? "yarn add -D " + pkg : "npm i --save-dev " + pkg)];
+                return [4, runCommand((projectFolder ? "cd " + projectFolder + " && " : '') + (useYarn ? "yarn add -D " + pkg : "npm i --save-dev " + pkg))];
             case 1:
                 _a.sent();
                 if (!fileName) return [3, 3];

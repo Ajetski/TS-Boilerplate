@@ -64,7 +64,7 @@ const runCommand = (cmd: string, rejectStdErr = true) => {
 
 const configurePackage = async (pkg: string, fileName?: string) => {
 	console.log(`installing ${pkg}...`);
-	await runCommand(projectFolder ? `cd ${projectFolder}; ` : '' + useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`);
+	await runCommand((projectFolder ? `cd ${projectFolder} && ` : '') + (useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`));
 	if (fileName)
 		await makeFileAsync(fileName);
 };
@@ -116,7 +116,6 @@ const runSetup = async () => {
 			await makeDirAsync('src');
 			await makeFileAsync('src/index.ts');
 		}
-
 
 		operations.push(managePackages());
 		operations.push(makeFileAsync('README.md'));
