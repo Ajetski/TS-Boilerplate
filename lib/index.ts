@@ -63,7 +63,7 @@ const runCommand = (cmd: string, rejectStdErr = true) => {
 
 const configurePackage = async (pkg: string, fileName?: string) => {
 	console.log(`installing ${pkg}...`);
-	await runCommand(useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`);
+	await runCommand(projectFolder ? `cd ${projectFolder} && ` : '' + useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`);
 	if (fileName)
 		await makeFileAsync(fileName);
 };
@@ -83,7 +83,7 @@ const runSetup = async () => {
 				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			} catch (err) {
 				console.log('package.json does not exist. Creating one...');
-				await runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false);
+				await runCommand(projectFolder ? `cd ${projectFolder} && ` : '' + useYarn ? 'yarn init -y' : 'npm init -y', false);
 				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			}
 			packageConfig = {
