@@ -83,7 +83,7 @@ const runSetup = async () => {
 				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			} catch (err) {
 				console.log('package.json does not exist. Creating one...');
-				await runCommand(projectFolder ? `cd ${projectFolder}; ` : '' + useYarn ? 'yarn init -y' : 'npm init -y', false);
+				await runCommand((projectFolder ? `cd ${projectFolder} && ` : '') + (useYarn ? 'yarn init -y' : 'npm init -y'), false);
 				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			}
 			packageConfig = {

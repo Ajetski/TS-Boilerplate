@@ -173,7 +173,7 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                             case 3:
                                 err_2 = _e.sent();
                                 console.log('package.json does not exist. Creating one...');
-                                return [4, runCommand(projectFolder ? "cd " + projectFolder + "; " : '' + useYarn ? 'yarn init -y' : 'npm init -y', false)];
+                                return [4, runCommand((projectFolder ? "cd " + projectFolder + " && " : '') + (useYarn ? 'yarn init -y' : 'npm init -y'), false)];
                             case 4:
                                 _e.sent();
                                 _d = (_c = JSON).parse;
