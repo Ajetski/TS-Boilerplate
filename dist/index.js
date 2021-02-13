@@ -52,26 +52,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var child_process_1 = require("child_process");
-var fs_1 = __importDefault(require("fs"));
+var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
-console.log(process.argv);
 var args = process.argv.slice(-2);
 var useYarn = !args.some(function (arg) { return arg === '--use-npm'; });
-var findProjectFolder = function () {
-    var createTsb = args.indexOf('create-tsb');
-    if (createTsb !== -1)
-        return args[createTsb + 1];
-    var tsb = args.indexOf('create-tsb');
-    if (tsb !== -1)
-        return args[tsb + 1];
-    var githubAjetskiTsb = args.indexOf('github:Ajetski/create-tsb');
-    if (githubAjetskiTsb !== -1)
-        return args[githubAjetskiTsb + 1];
-    return null;
-};
-var projectFolder = findProjectFolder();
+var projectFolder = args.find(function (arg) { return arg.indexOf('npx') === -1
+    && arg.indexOf('yarn') === -1
+    && arg.indexOf('--use-npm') === -1
+    && arg.indexOf('create') === -1
+    && arg.indexOf('tsb') === -1; });
 console.log("folder: " + projectFolder);
-var makeFile = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+var makeFileAsync = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var data;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -83,7 +74,7 @@ var makeFile = function (url) { return __awaiter(void 0, void 0, void 0, functio
                 if (typeof data === 'object')
                     data = JSON.stringify(data);
                 return [4, new Promise(function (resolve, reject) {
-                        return fs_1["default"].writeFile(url, data, function (err) {
+                        return fs_1.writeFile(projectFolder ? projectFolder + "/" + url : url, data, function (err) {
                             if (err)
                                 reject(err);
                             resolve();
@@ -95,11 +86,11 @@ var makeFile = function (url) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var makeDir = function (dirName) { return __awaiter(void 0, void 0, void 0, function () {
+var makeDirAsync = function (dirName) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, new Promise(function (resolve, reject) {
-                    return fs_1["default"].mkdir(dirName, function (err) {
+                    return fs_1.mkdir(projectFolder ? projectFolder + "/" + dirName : dirName, { recursive: true }, function (err) {
                         if (err)
                             reject(err);
                         resolve();
@@ -109,6 +100,15 @@ var makeDir = function (dirName) { return __awaiter(void 0, void 0, void 0, func
                 _a.sent();
                 return [2];
         }
+    });
+}); };
+var readFileAsync = function (fileName) { return new Promise(function (resolve, reject) {
+    return fs_1.readFile(projectFolder ? projectFolder + "/" + fileName : fileName, function (err, data) {
+        if (err) {
+            reject(err);
+            return;
+        }
+        resolve(data.toString());
     });
 }); };
 var runCommand = function (cmd, rejectStdErr) {
@@ -136,7 +136,7 @@ var configurePackage = function (pkg, fileName) { return __awaiter(void 0, void 
             case 1:
                 _a.sent();
                 if (!fileName) return [3, 3];
-                return [4, makeFile(fileName)];
+                return [4, makeFileAsync(fileName)];
             case 2:
                 _a.sent();
                 _a.label = 3;
@@ -150,44 +150,54 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 6, , 7]);
+                if (projectFolder) {
+                    console.log("creating " + projectFolder + " project folder...");
+                    fs_1.mkdirSync(projectFolder);
+                }
                 operations = [];
                 console.log("Creating TypeScript Boilerplate using " + (useYarn ? 'yarn' : 'npm') + "...");
                 managePackages = function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var packageConfig, err_2;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
+                    var packageConfig, _a, _b, err_2, _c, _d;
+                    return __generator(this, function (_e) {
+                        switch (_e.label) {
                             case 0:
                                 console.log('configuring package.json...');
-                                _a.label = 1;
+                                _e.label = 1;
                             case 1:
-                                _a.trys.push([1, 2, , 4]);
-                                packageConfig = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
-                                return [3, 4];
+                                _e.trys.push([1, 3, , 6]);
+                                _b = (_a = JSON).parse;
+                                return [4, readFileAsync('package.json')];
                             case 2:
-                                err_2 = _a.sent();
+                                packageConfig = _b.apply(_a, [_e.sent()]);
+                                return [3, 6];
+                            case 3:
+                                err_2 = _e.sent();
                                 console.log('package.json does not exist. Creating one...');
                                 return [4, runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false)];
-                            case 3:
-                                _a.sent();
-                                packageConfig = JSON.parse(fs_1["default"].readFileSync('package.json').toString());
-                                return [3, 4];
                             case 4:
+                                _e.sent();
+                                _d = (_c = JSON).parse;
+                                return [4, readFileAsync('package.json')];
+                            case 5:
+                                packageConfig = _d.apply(_c, [_e.sent()]);
+                                return [3, 6];
+                            case 6:
                                 packageConfig = __assign(__assign({}, packageConfig), { main: 'dist/index.js', scripts: __assign(__assign({}, packageConfig.scripts), { prestart: 'npm run rebuild', start: 'node .', dev: 'nodemon .', build: 'tsc', rebuild: 'npm run clean && npm run build', clean: 'rm -rf dist/*' }) });
                                 return [4, new Promise(function (resolve, reject) {
-                                        fs_1["default"].writeFile('package.json', JSON.stringify(packageConfig), function (err) {
+                                        fs_1.writeFile('package.json', JSON.stringify(packageConfig), function (err) {
                                             if (err)
                                                 reject(err);
                                             resolve();
                                         });
                                     })];
-                            case 5:
-                                _a.sent();
-                                return [4, configurePackage('typescript', 'tsconfig.json')];
-                            case 6:
-                                _a.sent();
-                                return [4, configurePackage('nodemon', 'nodemon.json')];
                             case 7:
-                                _a.sent();
+                                _e.sent();
+                                return [4, configurePackage('typescript', 'tsconfig.json')];
+                            case 8:
+                                _e.sent();
+                                return [4, configurePackage('nodemon', 'nodemon.json')];
+                            case 9:
+                                _e.sent();
                                 return [2];
                         }
                     });
@@ -195,10 +205,10 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                 makeSourceCode = function () { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4, makeDir('src')];
+                            case 0: return [4, makeDirAsync('src')];
                             case 1:
                                 _a.sent();
-                                return [4, makeFile('src/index.ts')];
+                                return [4, makeFileAsync('src/index.ts')];
                             case 2:
                                 _a.sent();
                                 return [2];
@@ -206,9 +216,9 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                     });
                 }); };
                 operations.push(managePackages());
-                operations.push(makeFile('README.md'));
+                operations.push(makeFileAsync('README.md'));
                 operations.push(makeSourceCode());
-                operations.push(makeFile('.gitignore'));
+                operations.push(makeFileAsync('.gitignore'));
                 return [4, Promise.all(operations)];
             case 1:
                 _a.sent();

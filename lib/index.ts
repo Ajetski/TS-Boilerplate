@@ -4,49 +4,46 @@
 // npx github:Ajetski/TS-Boilerplate
 
 import { exec } from 'child_process';
-import fs, { mkdir } from 'fs';
+import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-console.log(process.argv);
 const args = process.argv.slice(-2);
 const useYarn = !args.some(arg => arg === '--use-npm');
-const findProjectFolder = () => {
-	const createTsb = args.indexOf('create-tsb');
-	if (createTsb !== -1)
-		return args[createTsb + 1];
-
-	const tsb = args.indexOf('create-tsb');
-	if (tsb !== -1)
-		return args[tsb + 1];
-
-	const githubAjetskiTsb = args.indexOf('github:Ajetski/create-tsb');
-	if (githubAjetskiTsb !== -1)
-		return args[githubAjetskiTsb + 1];
-
-	return null;
-}
-const projectFolder = findProjectFolder();
+const projectFolder = args.find(arg => arg.indexOf('npx') === -1
+	&& arg.indexOf('yarn') === -1
+	&& arg.indexOf('--use-npm') === -1
+	&& arg.indexOf('create') === -1
+	&& arg.indexOf('tsb') === -1);
 console.log(`folder: ${projectFolder}`);
 
-const makeFile = async (url: string) => {
+const makeFileAsync = async (url: string) => {
 	console.log(`adding ${url}...`);
 	let { data } = await axios.get(`https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/${url}`);
 	if (typeof data === 'object')
 		data = JSON.stringify(data);
 	await new Promise<void>((resolve, reject) =>
-		fs.writeFile(url, data, (err) => {
+		writeFile(projectFolder ? `${projectFolder}/${url}` : url, data, (err) => {
 			if (err) reject(err);
 			resolve();
 		}));
 };
 
-const makeDir = async (dirName: string) => {
+const makeDirAsync = async (dirName: string) => {
 	await new Promise<void>((resolve, reject) =>
-		fs.mkdir(dirName, (err) => {
+		mkdir(projectFolder ? `${projectFolder}/${dirName}` : dirName, { recursive: true }, (err) => {
 			if (err) reject(err);
 			resolve();
 		}));
 }
+
+const readFileAsync = (fileName: string): Promise<string> => new Promise<string>((resolve, reject) =>
+	readFile(projectFolder ? `${projectFolder}/${fileName}` : fileName, (err, data) => {
+		if (err) {
+			reject(err);
+			return;
+		}
+		resolve(data.toString());
+	}));
 
 const runCommand = (cmd: string, rejectStdErr = true) => {
 	return new Promise<void>((resolve, reject) => {
@@ -68,22 +65,26 @@ const configurePackage = async (pkg: string, fileName?: string) => {
 	console.log(`installing ${pkg}...`);
 	await runCommand(useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`);
 	if (fileName)
-		await makeFile(fileName);
+		await makeFileAsync(fileName);
 };
 
 const runSetup = async () => {
 	try {
+		if (projectFolder) {
+			console.log(`creating ${projectFolder} project folder...`);
+			mkdirSync(projectFolder);
+		}
 		const operations = [];
 		console.log(`Creating TypeScript Boilerplate using ${useYarn ? 'yarn' : 'npm'}...`);
 		const managePackages = async () => {
 			console.log('configuring package.json...');
 			let packageConfig: { main: string, scripts: { [script: string]: string } };
 			try {
-				packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
+				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			} catch (err) {
 				console.log('package.json does not exist. Creating one...');
 				await runCommand(useYarn ? 'yarn init -y' : 'npm init -y', false);
-				packageConfig = JSON.parse(fs.readFileSync('package.json').toString());
+				packageConfig = JSON.parse(await readFileAsync('package.json'));
 			}
 			packageConfig = {
 				...packageConfig,
@@ -100,7 +101,7 @@ const runSetup = async () => {
 			};
 
 			await new Promise<void>((resolve, reject) => {
-				fs.writeFile('package.json', JSON.stringify(packageConfig), (err) => {
+				writeFile('package.json', JSON.stringify(packageConfig), (err) => {
 					if (err) reject(err);
 					resolve();
 				});
@@ -111,15 +112,15 @@ const runSetup = async () => {
 		};
 
 		const makeSourceCode = async () => {
-			await makeDir('src');
-			await makeFile('src/index.ts');
+			await makeDirAsync('src');
+			await makeFileAsync('src/index.ts');
 		}
 
 
 		operations.push(managePackages());
-		operations.push(makeFile('README.md'));
+		operations.push(makeFileAsync('README.md'));
 		operations.push(makeSourceCode());
-		operations.push(makeFile('.gitignore'));
+		operations.push(makeFileAsync('.gitignore'));
 		await Promise.all(operations);
 
 		try {
