@@ -47,6 +47,7 @@ const readFileAsync = (fileName: string): Promise<string> => new Promise<string>
 
 const runCommand = (cmd: string, rejectStdErr = true) => {
 	return new Promise<void>((resolve, reject) => {
+		console.log(`running command: '${cmd}'`)
 		exec(cmd, (error, stdout, stderr) => {
 			if (error) {
 				reject(error);
