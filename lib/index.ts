@@ -7,8 +7,8 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-const useYarn = process.argv.indexOf('--use-npm') !== -1;
-const addExpress = process.argv.indexOf('--express') !== -1;
+const useYarn = process.argv.some(arg => arg === '--use-npm');
+const addExpress = process.argv.some(arg => arg === '--express');
 const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
 	&& arg.indexOf('--use-npm') === -1
@@ -18,7 +18,7 @@ const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('--express') === -1);
 
 const makeFileAsync = async (url: string, writeUrl = url) => {
-	console.log(`adding ${url}...`);
+	console.log(`adding ${writeUrl}...`);
 	let { data } = await axios.get(`https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/${url}`);
 	if (typeof data === 'object')
 		data = JSON.stringify(data);
