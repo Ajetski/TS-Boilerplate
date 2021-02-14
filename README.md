@@ -1,12 +1,8 @@
 ## TypeScript Boilerplate
-### Run with yarn
-- create a folder for your project
-- run `yarn create tsb` or `npx create-tsb` to initialize the TypeScript Boilerplate
-
-
-### Run with npm
-- create a folder for your project
-- run `yarn create tsb --use-npm` or `npx create-tsb --use-npm` to initialize the TypeScript Boilerplate
+### Usage
+- `yarn create tsb [projectName] [--use-npm]` or `npx create-tsb [projectName] [--use-npm]`
+- Supplying an optional project name will cause the project to be installed in a subfolder with the name of the project.
+- Supplying the optional `--use-npm` will use npm instead of yarn to install packages.
 
 
 ## MIT License
