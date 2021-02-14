@@ -7,7 +7,6 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-console.log('args: ', process.argv);
 const useYarn = !process.argv.some(arg => arg === '--use-npm');
 const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
@@ -15,7 +14,6 @@ const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('create') === -1
 	&& arg.indexOf('tsb') === -1
 	&& arg.indexOf('node.exe') === -1);
-console.log(`folder: ${projectFolder}`);
 
 const makeFileAsync = async (url: string) => {
 	console.log(`adding ${url}...`);
@@ -48,7 +46,6 @@ const readFileAsync = (fileName: string): Promise<string> => new Promise<string>
 
 const runCommand = (cmd: string, rejectStdErr = true) => {
 	return new Promise<void>((resolve, reject) => {
-		console.log(`running command: '${cmd}'`)
 		exec(cmd, (error, stdout, stderr) => {
 			if (error) {
 				reject(error);

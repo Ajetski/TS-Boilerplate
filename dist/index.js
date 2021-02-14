@@ -54,7 +54,6 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
-console.log('args: ', process.argv);
 var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
 var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx') === -1
     && arg.indexOf('yarn') === -1
@@ -62,7 +61,6 @@ var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx')
     && arg.indexOf('create') === -1
     && arg.indexOf('tsb') === -1
     && arg.indexOf('node.exe') === -1; });
-console.log("folder: " + projectFolder);
 var makeFileAsync = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var data;
     return __generator(this, function (_a) {
@@ -115,7 +113,6 @@ var readFileAsync = function (fileName) { return new Promise(function (resolve, 
 var runCommand = function (cmd, rejectStdErr) {
     if (rejectStdErr === void 0) { rejectStdErr = true; }
     return new Promise(function (resolve, reject) {
-        console.log("running command: '" + cmd + "'");
         child_process_1.exec(cmd, function (error, stdout, stderr) {
             if (error) {
                 reject(error);
