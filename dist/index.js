@@ -54,6 +54,7 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
+console.log('args: ', process.argv);
 var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
 var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx') === -1
     && arg.indexOf('yarn') === -1

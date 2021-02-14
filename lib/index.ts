@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
+console.log('args: ', process.argv);
 const useYarn = !process.argv.some(arg => arg === '--use-npm');
 const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
