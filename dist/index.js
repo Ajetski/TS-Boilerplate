@@ -59,7 +59,8 @@ var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx')
     && arg.indexOf('yarn') === -1
     && arg.indexOf('--use-npm') === -1
     && arg.indexOf('create') === -1
-    && arg.indexOf('tsb') === -1; });
+    && arg.indexOf('tsb') === -1
+    && arg.indexOf('node.exe') === -1; });
 console.log("folder: " + projectFolder);
 var makeFileAsync = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var data;

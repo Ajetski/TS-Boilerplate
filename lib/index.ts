@@ -12,7 +12,8 @@ const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
 	&& arg.indexOf('--use-npm') === -1
 	&& arg.indexOf('create') === -1
-	&& arg.indexOf('tsb') === -1);
+	&& arg.indexOf('tsb') === -1
+	&& arg.indexOf('node.exe') === -1);
 console.log(`folder: ${projectFolder}`);
 
 const makeFileAsync = async (url: string) => {
