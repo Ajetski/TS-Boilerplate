@@ -1,8 +1,14 @@
 ## TypeScript Boilerplate
 ### Usage
-- `yarn create tsb [projectName] [--use-npm]` or `npx create-tsb [projectName] [--use-npm]`
-- Supplying an optional project name will cause the project to be installed in a subfolder with the name of the project.
+- `yarn create tsb` or `npx create-tsb`
+### Optional Flags
+- Supplying an optional project name as a single word and using lowercase will cause the project to be installed in a subfolder with the name of the project.
 - Supplying the optional `--use-npm` will use npm instead of yarn to install packages.
+- Supplying the optional `--express` will set up boilerplate and install packages for using express.js.
+
+### Usage examples
+- `yarn create tsb my-project-name --use-npm --express` will create a TypeScript project with express boilerplate in the folder `my-project-name` that use npm to install packages.
+- `npx create-tsb project-name` will create a TypeScript boilerplate project in the folder `project-name` using yarn to install packages.
 
 
 ## MIT License
