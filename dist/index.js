@@ -54,37 +54,42 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
-var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
+var useYarn = process.argv.indexOf('--use-npm') !== -1;
+var addExpress = process.argv.indexOf('--express') !== -1;
 var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx') === -1
     && arg.indexOf('yarn') === -1
     && arg.indexOf('--use-npm') === -1
     && arg.indexOf('create') === -1
     && arg.indexOf('tsb') === -1
-    && arg.indexOf('node.exe') === -1; });
-var makeFileAsync = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log("adding " + url + "...");
-                return [4, axios_1["default"].get("https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/" + url)];
-            case 1:
-                data = (_a.sent()).data;
-                if (typeof data === 'object')
-                    data = JSON.stringify(data);
-                return [4, new Promise(function (resolve, reject) {
-                        return fs_1.writeFile(projectFolder ? projectFolder + "/" + url : url, data, function (err) {
-                            if (err)
-                                reject(err);
-                            resolve();
-                        });
-                    })];
-            case 2:
-                _a.sent();
-                return [2];
-        }
+    && arg.indexOf('node.exe') === -1
+    && arg.indexOf('--express') === -1; });
+var makeFileAsync = function (url, writeUrl) {
+    if (writeUrl === void 0) { writeUrl = url; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("adding " + url + "...");
+                    return [4, axios_1["default"].get("https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/" + url)];
+                case 1:
+                    data = (_a.sent()).data;
+                    if (typeof data === 'object')
+                        data = JSON.stringify(data);
+                    return [4, new Promise(function (resolve, reject) {
+                            return fs_1.writeFile(projectFolder ? projectFolder + "/" + writeUrl : writeUrl, data, function (err) {
+                                if (err)
+                                    reject(err);
+                                resolve();
+                            });
+                        })];
+                case 2:
+                    _a.sent();
+                    return [2];
+            }
+        });
     });
-}); };
+};
 var makeDirAsync = function (dirName) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -126,23 +131,27 @@ var runCommand = function (cmd, rejectStdErr) {
         });
     });
 };
-var configurePackage = function (pkg, fileName) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log("installing " + pkg + "...");
-                return [4, runCommand((projectFolder ? "cd " + projectFolder + " && " : '') + (useYarn ? "yarn add -D " + pkg : "npm i --save-dev " + pkg))];
-            case 1:
-                _a.sent();
-                if (!fileName) return [3, 3];
-                return [4, makeFileAsync(fileName)];
-            case 2:
-                _a.sent();
-                _a.label = 3;
-            case 3: return [2];
-        }
+var configurePackage = function (pkg, fileName, prodDepedency) {
+    if (prodDepedency === void 0) { prodDepedency = false; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("installing " + pkg + "...");
+                    return [4, runCommand((projectFolder ? "cd " + projectFolder + " && " : '')
+                            + (useYarn ? "yarn add " + (!prodDepedency ? '-D' : '') + " " + pkg : "npm i " + (!prodDepedency ? '--save-dev' : '') + " " + pkg))];
+                case 1:
+                    _a.sent();
+                    if (!fileName) return [3, 3];
+                    return [4, makeFileAsync(fileName)];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3: return [2];
+            }
+        });
     });
-}); };
+};
 var runSetup = function () { return __awaiter(void 0, void 0, void 0, function () {
     var operations, managePackages, makeSourceCode, err_1;
     return __generator(this, function (_a) {
@@ -197,7 +206,15 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                                 return [4, configurePackage('nodemon', 'nodemon.json')];
                             case 9:
                                 _e.sent();
-                                return [2];
+                                if (!addExpress) return [3, 12];
+                                return [4, configurePackage('express', undefined, true)];
+                            case 10:
+                                _e.sent();
+                                return [4, configurePackage('@types/express')];
+                            case 11:
+                                _e.sent();
+                                _e.label = 12;
+                            case 12: return [2];
                         }
                     });
                 }); };
@@ -207,10 +224,16 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                             case 0: return [4, makeDirAsync('src')];
                             case 1:
                                 _a.sent();
+                                if (!!addExpress) return [3, 3];
                                 return [4, makeFileAsync('src/index.ts')];
                             case 2:
                                 _a.sent();
-                                return [2];
+                                return [3, 5];
+                            case 3: return [4, makeFileAsync('src/express.ts', 'src/index.ts')];
+                            case 4:
+                                _a.sent();
+                                _a.label = 5;
+                            case 5: return [2];
                         }
                     });
                 }); };

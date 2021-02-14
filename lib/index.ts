@@ -7,21 +7,23 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-const useYarn = !process.argv.some(arg => arg === '--use-npm');
+const useYarn = process.argv.indexOf('--use-npm') !== -1;
+const addExpress = process.argv.indexOf('--express') !== -1;
 const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
 	&& arg.indexOf('--use-npm') === -1
 	&& arg.indexOf('create') === -1
 	&& arg.indexOf('tsb') === -1
-	&& arg.indexOf('node.exe') === -1);
+	&& arg.indexOf('node.exe') === -1
+	&& arg.indexOf('--express') === -1);
 
-const makeFileAsync = async (url: string) => {
+const makeFileAsync = async (url: string, writeUrl = url) => {
 	console.log(`adding ${url}...`);
 	let { data } = await axios.get(`https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/${url}`);
 	if (typeof data === 'object')
 		data = JSON.stringify(data);
 	await new Promise<void>((resolve, reject) =>
-		writeFile(projectFolder ? `${projectFolder}/${url}` : url, data, (err) => {
+		writeFile(projectFolder ? `${projectFolder}/${writeUrl}` : writeUrl, data, (err) => {
 			if (err) reject(err);
 			resolve();
 		}));
@@ -60,9 +62,10 @@ const runCommand = (cmd: string, rejectStdErr = true) => {
 	});
 };
 
-const configurePackage = async (pkg: string, fileName?: string) => {
+const configurePackage = async (pkg: string, fileName?: string, prodDepedency = false) => {
 	console.log(`installing ${pkg}...`);
-	await runCommand((projectFolder ? `cd ${projectFolder} && ` : '') + (useYarn ? `yarn add -D ${pkg}` : `npm i --save-dev ${pkg}`));
+	await runCommand((projectFolder ? `cd ${projectFolder} && ` : '')
+		+ (useYarn ? `yarn add ${!prodDepedency ? '-D' : ''} ${pkg}` : `npm i ${!prodDepedency ? '--save-dev' : ''} ${pkg}`));
 	if (fileName)
 		await makeFileAsync(fileName);
 };
@@ -108,11 +111,18 @@ const runSetup = async () => {
 
 			await configurePackage('typescript', 'tsconfig.json')
 			await configurePackage('nodemon', 'nodemon.json');
+			if (addExpress) {
+				await configurePackage('express', undefined, true);
+				await configurePackage('@types/express');
+			}
 		};
 
 		const makeSourceCode = async () => {
 			await makeDirAsync('src');
-			await makeFileAsync('src/index.ts');
+			if (!addExpress)
+				await makeFileAsync('src/index.ts');
+			else
+				await makeFileAsync('src/express.ts', 'src/index.ts');
 		}
 
 		operations.push(managePackages());
