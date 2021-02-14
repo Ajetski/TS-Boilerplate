@@ -7,7 +7,7 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-const useYarn = process.argv.some(arg => arg === '--use-npm');
+const useYarn = !process.argv.some(arg => arg === '--use-npm');
 const addExpress = process.argv.some(arg => arg === '--express');
 const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
@@ -15,6 +15,7 @@ const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('create') === -1
 	&& arg.indexOf('tsb') === -1
 	&& arg.indexOf('node.exe') === -1
+	&& arg.indexOf('index.js') === -1
 	&& arg.indexOf('--express') === -1);
 
 const makeFileAsync = async (url: string, writeUrl = url) => {

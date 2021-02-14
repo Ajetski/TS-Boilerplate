@@ -54,14 +54,15 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
-var useYarn = process.argv.indexOf('--use-npm') !== -1;
-var addExpress = process.argv.indexOf('--express') !== -1;
+var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
+var addExpress = process.argv.some(function (arg) { return arg === '--express'; });
 var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx') === -1
     && arg.indexOf('yarn') === -1
     && arg.indexOf('--use-npm') === -1
     && arg.indexOf('create') === -1
     && arg.indexOf('tsb') === -1
     && arg.indexOf('node.exe') === -1
+    && arg.indexOf('index.js') === -1
     && arg.indexOf('--express') === -1; });
 var makeFileAsync = function (url, writeUrl) {
     if (writeUrl === void 0) { writeUrl = url; }
@@ -70,7 +71,7 @@ var makeFileAsync = function (url, writeUrl) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("adding " + url + "...");
+                    console.log("adding " + writeUrl + "...");
                     return [4, axios_1["default"].get("https://raw.githubusercontent.com/Ajetski/create-tsb/master/resources/" + url)];
                 case 1:
                     data = (_a.sent()).data;
