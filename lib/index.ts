@@ -7,9 +7,8 @@ import { exec } from 'child_process';
 import { mkdir, writeFile, readFile, mkdirSync } from 'fs';
 import axios from 'axios';
 
-const args = process.argv.slice(-2);
-const useYarn = !args.some(arg => arg === '--use-npm');
-const projectFolder = args.find(arg => arg.indexOf('npx') === -1
+const useYarn = !process.argv.some(arg => arg === '--use-npm');
+const projectFolder = process.argv.find(arg => arg.indexOf('npx') === -1
 	&& arg.indexOf('yarn') === -1
 	&& arg.indexOf('--use-npm') === -1
 	&& arg.indexOf('create') === -1
@@ -102,7 +101,7 @@ const runSetup = async () => {
 			};
 
 			await new Promise<void>((resolve, reject) => {
-				writeFile('package.json', JSON.stringify(packageConfig), (err) => {
+				writeFile(projectFolder ? `${projectFolder}/package.json` : 'package.json', JSON.stringify(packageConfig), (err) => {
 					if (err) reject(err);
 					resolve();
 				});

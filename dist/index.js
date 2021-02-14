@@ -54,9 +54,8 @@ exports.__esModule = true;
 var child_process_1 = require("child_process");
 var fs_1 = require("fs");
 var axios_1 = __importDefault(require("axios"));
-var args = process.argv.slice(-2);
-var useYarn = !args.some(function (arg) { return arg === '--use-npm'; });
-var projectFolder = args.find(function (arg) { return arg.indexOf('npx') === -1
+var useYarn = !process.argv.some(function (arg) { return arg === '--use-npm'; });
+var projectFolder = process.argv.find(function (arg) { return arg.indexOf('npx') === -1
     && arg.indexOf('yarn') === -1
     && arg.indexOf('--use-npm') === -1
     && arg.indexOf('create') === -1
@@ -185,7 +184,7 @@ var runSetup = function () { return __awaiter(void 0, void 0, void 0, function (
                             case 6:
                                 packageConfig = __assign(__assign({}, packageConfig), { main: 'dist/index.js', scripts: __assign(__assign({}, packageConfig.scripts), { prestart: 'npm run rebuild', start: 'node .', dev: 'nodemon .', build: 'tsc', rebuild: 'npm run clean && npm run build', clean: 'rm -rf dist/*' }) });
                                 return [4, new Promise(function (resolve, reject) {
-                                        fs_1.writeFile('package.json', JSON.stringify(packageConfig), function (err) {
+                                        fs_1.writeFile(projectFolder ? projectFolder + "/package.json" : 'package.json', JSON.stringify(packageConfig), function (err) {
                                             if (err)
                                                 reject(err);
                                             resolve();
